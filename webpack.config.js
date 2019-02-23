@@ -4,7 +4,7 @@ const path = require('path');
 
 module.exports = {
   entry: {
-    app: ['./src/index.js']
+    app: ['./sample/index.js']
   },
   module: {
     rules: [
@@ -22,20 +22,21 @@ module.exports = {
   plugins: [
     new HtmlwebpackPlugin({
       inject: 'body',
-      template: './src/index.html'
+      template: './sample/index.html'
     })
   ],
   resolve: {
     modules: [
         path.resolve('./src'),
         path.resolve('./src/shaders'),
+        path.resolve('./sample'),
         'node_modules'
     ],
   },
   output: {
     filename: 'bundle.[hash].js',
     chunkFilename: '[name].js',
-    path: path.resolve(__dirname, "./src"),
+    path: path.resolve(__dirname, "./sample"),
     publicPath: path.resolve(__dirname, '/')
   },
   devtool: 'cheap-module-source-map'

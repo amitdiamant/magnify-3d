@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import * as dat from 'dat.gui';
-import Magnify3d from './Magnify3d';
+import Magnify3d from '../src/Magnify3d';
 
 // FPS monitor
 javascript:(function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();document.body.appendChild(stats.dom);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='//mrdoob.github.io/stats.js/build/stats.min.js';document.head.appendChild(script);})()
@@ -21,7 +21,7 @@ const MAX_OUTLINE_THICKNESS = 50;
 function initScene() {
     scene = new THREE.Scene();
 
-    const texture = new THREE.TextureLoader().load( 'src/checkerboard.png');
+    const texture = new THREE.TextureLoader().load( 'sample/checkerboard.png');
 
     const checkerMaterial = new THREE.MeshBasicMaterial( { map: texture } );
     const normalMaterial = new THREE.MeshNormalMaterial();
