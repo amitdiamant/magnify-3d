@@ -2,11 +2,12 @@
   "name": "magnify-3d",
   "version": "1.0.0",
   "description": "Real time optic magnifying glass library.",
-  "main": "index.js",
+  "main": "build/Magnify3d.js",
   "scripts": {
-    "dev": "./node_modules/.bin/webpack-dev-server --config ./webpack.config --devtool source-map --progress --hot --mode=development",
-    "build": "NODE_ENV=production webpack --progress --config ./webpack.config --mode=production",
-    "deploy": "gh-pages -d build"
+    "dev": "./node_modules/.bin/webpack-dev-server --config ./webpack.config.sample --devtool source-map --progress --hot --mode=development",
+    "build": "NODE_ENV=production webpack --progress --config ./webpack.config.build --mode=production",
+    "build-sample": "NODE_ENV=production webpack --progress --config ./webpack.config.sample --mode=production",
+    "deploy-sample": "gh-pages -d build/sample"
   },
   "author": "Amit Diamant",
   "repository": {
@@ -22,7 +23,6 @@
     "dat.gui": "^0.7.5",
     "gh-pages": "^2.0.1",
     "html-webpack-plugin": "^3.2.0",
-    "three": "^0.92.0",
     "webpack": "4.29.3",
     "webpack-cli": "^3.2.3",
     "webpack-dev-server": "^3.1.14",

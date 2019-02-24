@@ -21,7 +21,7 @@ module.exports = {
     ]
   },
   plugins: [
-    new CleanWebpackPlugin(['build']),
+    new CleanWebpackPlugin(['build/sample']),
     new HtmlwebpackPlugin({
       inject: 'body',
       template: './sample/index.html',
@@ -43,6 +43,6 @@ module.exports = {
   },
   output: {
     filename: 'bundle.[hash].js',
-    path: path.resolve(__dirname, "./build")
+    path: path.resolve(__dirname, "./build/sample")
   }
 };
