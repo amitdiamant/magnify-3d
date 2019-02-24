@@ -21,6 +21,7 @@ export default class Magnify3d {
         });
 
         this.material.transparent = true; // Needed if inputBuffer is undefined.
+        this.outlineColor = new THREE.Color();
 
         const renderPlane = new THREE.BufferGeometry();
         const p = new Float32Array([
@@ -47,15 +48,15 @@ export default class Magnify3d {
 
     render({    
                 renderer,
+                renderSceneCB,
                 pos = null,
                 zoom = 2.0,
                 exp = 35.0,
-                outlineColor = new THREE.Color( 0xCCCCCC ),
                 radius = 100.0,
+                outlineColor = 0xCCCCCC,
                 outlineThickness = 8.0,
                 inputBuffer = undefined,
-                outputBuffer = undefined,
-                renderSceneCB = undefined    
+                outputBuffer = undefined    
             }) {
 
         if (!renderer) {
@@ -81,8 +82,8 @@ export default class Magnify3d {
         this.material.uniforms['zoomedTexture'].value = this.zoomTarget.texture;
         this.material.uniforms['originalTexture'].value = (inputBuffer && inputBuffer.texture) || inputBuffer;
         this.material.uniforms['pos'].value = pos;
-        this.material.uniforms['outlineColor'].value = outlineColor;
-        this.material.uniforms['resolution'].value = new THREE.Vector2( width, height );
+        this.material.uniforms['outlineColor'].value = this.outlineColor.set(outlineColor);
+        this.material.uniforms['resolution'].value = { x: width, y: height };
         this.material.uniforms['zoom'].value = zoom;
         this.material.uniforms['radius'].value = radius * pixelRatio;
         this.material.uniforms['outlineThickness'].value = outlineThickness * pixelRatio;

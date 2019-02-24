@@ -6,7 +6,7 @@ import Magnify3d from '../src/Magnify3d';
 javascript:(function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();document.body.appendChild(stats.dom);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='//mrdoob.github.io/stats.js/build/stats.min.js';document.head.appendChild(script);})()
 
 let camera, scene, renderer, defaultTarget, boxMesh1, boxMesh2;
-let magnify3d, color, params, gui;
+let magnify3d, params, gui;
 let shiftDown, ctrlDown;
 
 const MIN_ZOOM = 1;
@@ -137,8 +137,6 @@ function initGUI() {
         outlineColor: 0xDDDDDD
     }
 
-    color = new THREE.Color();
-
     gui = new dat.GUI();
     gui.add(params, 'zoom', MIN_ZOOM, MAX_ZOOM);
     gui.add(params, 'exp', MIN_EXP, MAX_EXP);
@@ -171,7 +169,7 @@ function render() {
         exp: params.exp,
         radius: params.radius,
         outlineThickness: params.outlineThickness,
-        outlineColor: color.set(params.outlineColor),
+        outlineColor: params.outlineColor,
         inputBuffer: defaultTarget,
         outputBuffer: undefined,
         renderSceneCB: renderSceneToTarget
