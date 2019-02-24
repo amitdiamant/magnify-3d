@@ -4,7 +4,7 @@ Get a high-res zoomed section of your 3d scene, with a single API.
 
 ## Demo
 - [Live Demo](https://amitdiamant.github.io/magnify-3d)
-- [Sample Code](sample/index.js)
+- [Sample Code](sample/index.js#L165)
 
 ## Install
 ```$ npm install magnify-3d --save ```
