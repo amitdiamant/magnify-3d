@@ -21,7 +21,7 @@ const MAX_OUTLINE_THICKNESS = 50;
 function initScene() {
     scene = new THREE.Scene();
 
-    const texture = new THREE.TextureLoader().load( 'sample/checkerboard.png');
+    const texture = new THREE.TextureLoader().load( 'res/checkerboard.png');
 
     const checkerMaterial = new THREE.MeshBasicMaterial( { map: texture } );
     const normalMaterial = new THREE.MeshNormalMaterial();
@@ -51,7 +51,7 @@ function initScene() {
 
 function initCamera() {
     camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 1000);
-    camera.position.set(0.0, 40.0, 200.0);
+    camera.position.set(0.0, 40.0, 250.0);
     camera.lookAt(0.0, 0.0, 0.0);
 }
 
@@ -90,7 +90,7 @@ function initEventListeners() {
         } else if (ctrlDown) {
             params.exp = Math.min(Math.max(MIN_EXP, params.exp + delta), MAX_EXP);
         } else {
-            params.zoom = Math.min(Math.max(MIN_ZOOM, params.zoom + delta), MAX_ZOOM);
+            params.zoom = Math.min(Math.max(MIN_ZOOM, params.zoom + (delta / 10)), MAX_ZOOM);
         }
 
         gui.updateDisplay();

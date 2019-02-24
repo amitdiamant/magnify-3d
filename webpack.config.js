@@ -1,5 +1,6 @@
-const webpack = require('webpack');
 const HtmlwebpackPlugin = require('html-webpack-plugin');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const path = require('path');
 
 module.exports = {
@@ -20,10 +21,17 @@ module.exports = {
     ]
   },
   plugins: [
+    new CleanWebpackPlugin(['build']),
     new HtmlwebpackPlugin({
       inject: 'body',
-      template: './sample/index.html'
-    })
+      template: './sample/index.html',
+      title: 'Magnify-3d'
+    }),
+    new CopyWebpackPlugin(
+      [
+          { from: path.join(__dirname, 'sample/res'), to: 'res' },
+      ]
+    ),
   ],
   resolve: {
     modules: [
@@ -35,9 +43,6 @@ module.exports = {
   },
   output: {
     filename: 'bundle.[hash].js',
-    chunkFilename: '[name].js',
-    path: path.resolve(__dirname, "./sample"),
-    publicPath: path.resolve(__dirname, '/')
-  },
-  devtool: 'cheap-module-source-map'
+    path: path.resolve(__dirname, "./build")
+  }
 };

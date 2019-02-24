@@ -4,7 +4,9 @@
   "description": "Real time optic magnifying glass library.",
   "main": "index.js",
   "scripts": {
-    "dev": "./node_modules/.bin/webpack-dev-server --devtool source-map --progress --hot --mode=development"
+    "dev": "./node_modules/.bin/webpack-dev-server --config ./webpack.config --devtool source-map --progress --hot --mode=development",
+    "build": "NODE_ENV=production webpack --progress --config ./webpack.config --mode=production",
+    "deploy": "gh-pages -d build"
   },
   "author": "Amit Diamant",
   "repository": {
@@ -15,7 +17,10 @@
   "devDependencies": {
     "babel-core": "^6.26.3",
     "babel-loader": "^7.1.4",
+    "clean-webpack-plugin": "^1.0.1",
+    "copy-webpack-plugin": "^5.0.0",
     "dat.gui": "^0.7.5",
+    "gh-pages": "^2.0.1",
     "html-webpack-plugin": "^3.2.0",
     "three": "^0.92.0",
     "webpack": "4.29.3",
