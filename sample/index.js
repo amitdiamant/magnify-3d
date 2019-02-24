@@ -138,9 +138,9 @@ function initGUI() {
     }
 
     gui = new dat.GUI();
+    gui.add(params, 'radius', MIN_RADIUS, MAX_RADIUS);
     gui.add(params, 'zoom', MIN_ZOOM, MAX_ZOOM);
     gui.add(params, 'exp', MIN_EXP, MAX_EXP);
-    gui.add(params, 'radius', MIN_RADIUS, MAX_RADIUS);
     gui.add(params, 'outlineThickness', MIN_OUTLINE_THICKNESS, MAX_OUTLINE_THICKNESS);
     gui.addColor(params, 'outlineColor');
 }
