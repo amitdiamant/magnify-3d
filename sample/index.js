@@ -131,10 +131,10 @@ function initEventListeners() {
 function initGUI() {
     params = {
         zoom: 2.0,
-        exp: 40.0,
-        radius: 100.0,
-        outlineThickness: 8.0,
-        outlineColor: 0xDDDDDD
+        exp: 30.0,
+        radius: 110.0,
+        outlineThickness: 4.0,
+        outlineColor: 0x555555
     }
 
     gui = new dat.GUI();

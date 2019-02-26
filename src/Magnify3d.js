@@ -86,7 +86,7 @@ export default class Magnify3d {
         this.material.uniforms['resolution'].value = { x: width, y: height };
         this.material.uniforms['zoom'].value = zoom;
         this.material.uniforms['radius'].value = radius * pixelRatio;
-        this.material.uniforms['outlineThickness'].value = outlineThickness * pixelRatio;
+        this.material.uniforms['outlineThickness'].value = outlineThickness;
         this.material.uniforms['exp'].value = exp;
 
         // Make viewport centered according to pos.
