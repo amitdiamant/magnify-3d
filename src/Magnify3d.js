@@ -1,10 +1,12 @@
 import * as THREE from 'three';
 import MagnifyingShaderFrag from './shaders/MagnifyingShaderFrag.glsl';
 import MagnifyingShaderVert from './shaders/MagnifyingShaderVert.glsl';
+import FXAAShaderFrag from './shaders/FXAAShaderFrag.glsl';
+import FXAAShaderVert from './shaders/FXAAShaderVert.glsl';
 
 export default class Magnify3d {
     constructor() {
-        this.material = new THREE.ShaderMaterial({
+        this.magnifyMaterial = new THREE.ShaderMaterial({
             vertexShader: MagnifyingShaderVert,
             fragmentShader: MagnifyingShaderFrag,
             uniforms: {
@@ -20,30 +22,40 @@ export default class Magnify3d {
             }
         });
 
-        this.material.transparent = true; // Needed if inputBuffer is undefined.
-        this.outlineColor = new THREE.Color();
+        this.magnifyMaterial.transparent = true; // Needed if inputBuffer is undefined.
 
-        const renderPlane = new THREE.BufferGeometry();
-        const p = new Float32Array([
-            -1.0, -1.0,  0.0,
-            1.0, -1.0,  0.0,
-            1.0,  1.0,  0.0,
-            1.0,  1.0,  0.0,
-           -1.0,  1.0,  0.0,
-           -1.0, -1.0,  0.0
-        ]);
-
-        renderPlane.addAttribute("position", new THREE.BufferAttribute(p, 3));
-
-        const quad = new THREE.Mesh(renderPlane, this.material);
-
-        this.scene = new THREE.Scene();
-        this.scene.add(quad);
+        this.magnifyScene = this.createScene(this.magnifyMaterial);
 
         this.camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
 
         // Size is not really matter here. It gets updated inside `render`.
         this.zoomTarget = new THREE.WebGLRenderTarget(0, 0);
+        
+        // Antialiasing shader
+        this.fxaaMaterial = new THREE.ShaderMaterial({
+            vertexShader: FXAAShaderVert,
+            fragmentShader: FXAAShaderFrag,
+            uniforms: {
+                'tDiffuse':   { type: 't' },
+                'resolution': { type: 'v2' }
+            }
+        });
+
+        this.fxaaMaterial.transparent = true; // Needed if inputBuffer is undefined.
+        this.fxaaScene = this.createScene(this.fxaaMaterial);
+
+        this.fxaaTarget = new THREE.WebGLRenderTarget(0, 0);
+
+        this.outlineColor = new THREE.Color();
+    }
+
+    createScene(material) {
+        const quad = new THREE.Mesh( new THREE.PlaneBufferGeometry( 2, 2 ), material );
+
+        const scene = new THREE.Scene();
+        scene.add(quad);
+
+        return scene;
     }
 
     render({    
@@ -55,8 +67,9 @@ export default class Magnify3d {
                 radius = 100.0,
                 outlineColor = 0xCCCCCC,
                 outlineThickness = 8.0,
+                antialias = true,
                 inputBuffer = undefined,
-                outputBuffer = undefined    
+                outputBuffer = undefined
             }) {
 
         if (!renderer) {
@@ -79,15 +92,15 @@ export default class Magnify3d {
         height *= pixelRatio;
 
         // Set shader uniforms.
-        this.material.uniforms['zoomedTexture'].value = this.zoomTarget.texture;
-        this.material.uniforms['originalTexture'].value = (inputBuffer && inputBuffer.texture) || inputBuffer;
-        this.material.uniforms['pos'].value = pos;
-        this.material.uniforms['outlineColor'].value = this.outlineColor.set(outlineColor);
-        this.material.uniforms['resolution'].value = { x: width, y: height };
-        this.material.uniforms['zoom'].value = zoom;
-        this.material.uniforms['radius'].value = radius * pixelRatio;
-        this.material.uniforms['outlineThickness'].value = outlineThickness * pixelRatio;
-        this.material.uniforms['exp'].value = exp;
+        this.magnifyMaterial.uniforms['zoomedTexture'].value = this.zoomTarget.texture;
+        this.magnifyMaterial.uniforms['originalTexture'].value = (inputBuffer && inputBuffer.texture) || inputBuffer;
+        this.magnifyMaterial.uniforms['pos'].value = pos;
+        this.magnifyMaterial.uniforms['outlineColor'].value = this.outlineColor.set(outlineColor);
+        this.magnifyMaterial.uniforms['resolution'].value = { x: width, y: height };
+        this.magnifyMaterial.uniforms['zoom'].value = zoom;
+        this.magnifyMaterial.uniforms['radius'].value = radius * pixelRatio;
+        this.magnifyMaterial.uniforms['outlineThickness'].value = outlineThickness * pixelRatio;
+        this.magnifyMaterial.uniforms['exp'].value = exp;
 
         // Make viewport centered according to pos.
         const zoomedViewport = [
@@ -109,7 +122,19 @@ export default class Magnify3d {
 
         renderSceneCB(this.zoomTarget);
 
-        renderer.render(this.scene, this.camera, outputBuffer); // Render final pass to output buffer.
+        if (antialias) {
+            this.fxaaMaterial.uniforms['tDiffuse'].value = this.fxaaTarget.texture;
+            this.fxaaMaterial.uniforms[ 'resolution' ].value = { x: 1 / width, y: 1 / height };
+
+            this.fxaaTarget.setSize(width, height);
+            this.fxaaTarget.dispose();
+
+            renderer.render(this.magnifyScene, this.camera, this.fxaaTarget); // Render magnify pass to fxaaTarget.
+            renderer.render(this.fxaaScene, this.camera, outputBuffer); // Render final pass to output buffer.
+        } else {
+            renderer.render(this.magnifyScene, this.camera, outputBuffer); // Render magnify pass to outputBuffer.
+        }
+
         renderer.autoClear = autoClearBackup;
     }
 };
