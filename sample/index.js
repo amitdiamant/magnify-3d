@@ -96,11 +96,11 @@ function initEventListeners() {
         const delta = (e.wheelDelta && e.wheelDelta / 40) || -e.detail;
 
         if (shiftDown) {
-            params.radius = Math.min(Math.max(MIN_RADIUS, params.radius + delta), MAX_RADIUS);
+            params.zoom = Math.min(Math.max(MIN_ZOOM, params.zoom + (delta / 10)), MAX_ZOOM);
         } else if (ctrlDown) {
             params.exp = Math.min(Math.max(MIN_EXP, params.exp + delta), MAX_EXP);
         } else {
-            params.zoom = Math.min(Math.max(MIN_ZOOM, params.zoom + (delta / 10)), MAX_ZOOM);
+            params.radius = Math.min(Math.max(MIN_RADIUS, params.radius + delta), MAX_RADIUS);
         }
 
         gui.updateDisplay();
