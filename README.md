@@ -1,5 +1,5 @@
 
-[![version](https://img.shields.io/badge/version-1.0.2-green.svg)](https://semver.org)
+[![version](https://img.shields.io/badge/version-1.0.3-green.svg)](https://semver.org)
 
 ## Magnify 3d
 Real time optic magnifying glass for [three.js](https://github.com/mrdoob/three.js).
@@ -44,12 +44,18 @@ magnify3d.render({
 | `radius`  | number | 100.0 | | Radius of the magnifying glass in pixels. |
 | `outlineColor`  | hex | 0xcccccc | | Color of the glass' outline. |
 | `outlineThickness`  | number | 8.0 | | Thickness of the glass' outline in pixels. Can be set to 0. |
+| `antialias` | Boolean | true | | Whether to add an antialiasing pass or not. |
 | `inputBuffer`  | WebGLRenderTarget | | | Buffer filled with the original scene render. In case `inputBuffer` is not supplied, the canvas will be the input buffer.|
 | `outputBuffer`  | WebGLRenderTarget | | | Render target. In case `outputBuffer` is not supplied, the output will be directly on the screen.|
   
                 
 ## Contribute
 If you have a feature request, please add it as an issue or make a pull request.
+
+## References
+- [three.js](https://github.com/mrdoob/three.js)
+- [Fast Approximate Anti-Aliasing](https://github.com/mrdoob/three.js/blob/dev/examples/js/shaders/FXAAShader.js)
+- [Teapot Geometry](https://github.com/mrdoob/three.js/blob/dev/examples/js/geometries/TeapotBufferGeometry.js)
 
 ## License
 [MIT](LICENSE)
