@@ -5,6 +5,7 @@ uniform sampler2D zoomedTexture;
 uniform sampler2D originalTexture;
 uniform vec2 pos;
 uniform vec2 resolution;
+uniform vec2 mag_resolution;
 uniform float zoom;
 uniform float exp;
 uniform float radius;
@@ -12,8 +13,8 @@ uniform float outlineThickness;
 uniform vec3 outlineColor;
 
 void main() {
-    vec2 uv = gl_FragCoord.xy / resolution.xy;
-    vec2 pos_uv = pos.xy / resolution.xy;
+    vec2 uv = gl_FragCoord.xy / mag_resolution.xy;
+    vec2 pos_uv = pos.xy / mag_resolution.xy;
     
     float dist = distance(gl_FragCoord.xy, pos.xy);
 
@@ -34,9 +35,9 @@ void main() {
             gl_FragColor = mix(texture2D(zoomedTexture, uv), vec4(outlineColor, 1.0), alpha);
         } else {
             // Outside outline.
-            gl_FragColor = mix(texture2D(originalTexture, uv), vec4(outlineColor, 1.0), alpha);
+            gl_FragColor = mix(texture2D(originalTexture, gl_FragCoord.xy / resolution.xy), vec4(outlineColor, 1.0), alpha);
         }
     } else {
-        gl_FragColor = texture2D(originalTexture, uv);
+        gl_FragColor = texture2D(originalTexture, gl_FragCoord.xy / resolution.xy);
     }
 }    

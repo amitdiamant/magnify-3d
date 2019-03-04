@@ -11,7 +11,7 @@ let magnify3d, params, gui;
 let shiftDown, ctrlDown;
 
 const MIN_ZOOM = 1;
-const MAX_ZOOM = 30;
+const MAX_ZOOM = 15;
 const MIN_EXP = 1;
 const MAX_EXP = 100;
 const MIN_RADIUS = 10;
@@ -73,7 +73,9 @@ function initRenderer() {
     renderer.setPixelRatio( pixelRatio );
     renderer.setSize(window.innerWidth, window.innerHeight);
 
-    document.body.appendChild(renderer.domElement);
+    const container = document.createElement('div');
+    container.appendChild(renderer.domElement);
+    document.body.appendChild(container);
 
     defaultTarget = new THREE.WebGLRenderTarget(window.innerWidth * pixelRatio, window.innerHeight * pixelRatio); 
 }
@@ -81,6 +83,12 @@ function initRenderer() {
 function initEventListeners() {
     document.addEventListener('mousemove', (e) => {
         params.mouse = new THREE.Vector2(e.clientX, window.innerHeight - e.clientY);
+    });
+
+    document.addEventListener('touchmove', (e) => {
+        params.mouse = new THREE.Vector2(e.pageX, window.innerHeight - e.pageY);
+        e.preventDefault();
+        e.stopPropagation();
     });
 
     window.addEventListener('resize', (e) => {

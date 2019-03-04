@@ -14,6 +14,7 @@ export default class Magnify3d {
                 "originalTexture": { type: "t" },
                 'pos': { type: 'v2' },
                 'outlineColor': { type: 'v3' },
+                'mag_resolution': { type: 'v2' },
                 'resolution': { type: 'v2' },
                 'zoom': { type: 'f' },
                 'radius': { type: 'f' },
@@ -91,11 +92,22 @@ export default class Magnify3d {
         width *= pixelRatio;
         height *= pixelRatio;
 
+        const maxViewportWidth = renderer.context.getParameter(renderer.context.MAX_VIEWPORT_DIMS)[0];
+        const maxViewportHeight = renderer.context.getParameter(renderer.context.MAX_VIEWPORT_DIMS)[1];
+
+        let resWidth = width;
+        let resHeight = height;
+        if (width * zoom > maxViewportWidth) {
+            resWidth = width * (width * zoom / maxViewportWidth);
+            resHeight = height * (width * zoom / maxViewportWidth);
+        }
+
         // Set shader uniforms.
         this.magnifyMaterial.uniforms['zoomedTexture'].value = this.zoomTarget.texture;
         this.magnifyMaterial.uniforms['originalTexture'].value = (inputBuffer && inputBuffer.texture) || inputBuffer;
         this.magnifyMaterial.uniforms['pos'].value = pos;
         this.magnifyMaterial.uniforms['outlineColor'].value = this.outlineColor.set(outlineColor);
+        this.magnifyMaterial.uniforms['mag_resolution'].value = { x: resWidth, y: resHeight };
         this.magnifyMaterial.uniforms['resolution'].value = { x: width, y: height };
         this.magnifyMaterial.uniforms['zoom'].value = zoom;
         this.magnifyMaterial.uniforms['radius'].value = radius * pixelRatio;
@@ -104,30 +116,26 @@ export default class Magnify3d {
 
         // Make viewport centered according to pos.
         const zoomedViewport = [
-            -pos.x * (zoom - 1),
-            -pos.y * (zoom - 1),
-            width * zoom,
-            height * zoom
+            -pos.x * (zoom - 1) * width / resWidth,
+            -pos.y * (zoom - 1) * height / resHeight,
+            width * width / resWidth * zoom,
+            height * height / resHeight * zoom
         ];
 
         this.zoomTarget.width = width;
         this.zoomTarget.height = height;
         this.zoomTarget.viewport.set(...zoomedViewport);
-        this.zoomTarget.scissor.set(...zoomedViewport);
-
-        this.zoomTarget.dispose();
         
         const autoClearBackup = renderer.autoClear;
-        renderer.autoClear = false; // Make sure autoClear is not set, so calling `render` won't erase the original rendering.
+        renderer.autoClear = true; // Make sure autoClear is set.
 
         renderSceneCB(this.zoomTarget);
 
         if (antialias) {
             this.fxaaMaterial.uniforms['tDiffuse'].value = this.fxaaTarget.texture;
-            this.fxaaMaterial.uniforms[ 'resolution' ].value = { x: 1 / width, y: 1 / height };
+            this.fxaaMaterial.uniforms['resolution'].value = { x: 1 / width, y: 1 / height };
 
             this.fxaaTarget.setSize(width, height);
-            this.fxaaTarget.dispose();
 
             renderer.render(this.magnifyScene, this.camera, this.fxaaTarget); // Render magnify pass to fxaaTarget.
             renderer.render(this.fxaaScene, this.camera, outputBuffer); // Render final pass to output buffer.
