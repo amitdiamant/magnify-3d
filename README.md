@@ -1,5 +1,5 @@
 
-[![version](https://img.shields.io/badge/version-1.0.3-green.svg)](https://semver.org)
+[![version](https://img.shields.io/badge/version-1.0.4-green.svg)](https://semver.org)
 
 ## Magnify 3d
 Real time optic magnifying glass for [three.js](https://github.com/mrdoob/three.js).
